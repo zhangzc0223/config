@@ -64,16 +64,8 @@ rule-providers:
     url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
     interval: 86400
 
-  zhangzc:
-    type: http
-    behavior: classical
-    path: ./RuleSet/zhangzc.yaml
-    url: https://raw.githubusercontent.com/zhangzc0223/config/main/clash/zhangzc.yaml
-    interval: 86400
-
 
 rules:
   - RULE-SET,Apple,苹果服务
-  - RULE-SET,zhangzc,全球加速
   - GEOIP,CN,DIRECT
   - MATCH,全球加速

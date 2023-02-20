@@ -1,0 +1,79 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+external-controller: '127.0.0.1:9090'
+dns:
+    enable: true
+    ipv6: false
+    default-nameserver: [223.5.5.5, 119.29.29.29]
+    enhanced-mode: redir-host
+    fake-ip-range: 198.18.0.1/16
+    use-hosts: true
+    nameserver: ['https://doh.pub/dns-query']
+    fallback: ['119.29.29.29']
+    fallback-filter: { geoip: true, ipcidr: [240.0.0.0/4, 0.0.0.0/32] }
+
+
+proxy-providers:
+
+  All:
+    type: http
+    url: "https://dove.589669.xyz/all2clash?&sub=https%3A%2F%2Fxn--4gq62f52gdss.com%2Fapi%2Fv1%2Fclient%2Fsubscribe%3Ftoken%3D56403b5d5e335374ad666651c061e6b2&emoji=0&sort=0&aead=0&inline=1"
+    interval: 3600
+    path: ./all.yaml
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
+
+proxy-groups:
+
+  - name: "全球加速"
+    type: select
+    proxies:
+      - 优选节点
+      - 手动选择
+
+  - name: "手动选择"
+    type: select
+    use:
+      - All
+    url: 'http://www.gstatic.com/generate_204'
+
+  - name: "苹果服务"
+    type: select
+    proxies:
+      - DIRECT
+      - 优选节点
+      
+  - name: "优选节点"
+    type: url-test
+    use:
+      - All
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+
+rule-providers:
+
+  Apple:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Apple/Apple.yaml
+    url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
+    interval: 86400
+
+  zhangzc:
+    type: http
+    behavior: classical
+    path: ./RuleSet/zhangzc.yaml
+    url: https://raw.githubusercontent.com/zhangzc0223/config/main/clash/zhangzc.yaml
+    interval: 86400
+
+
+rules:
+  - RULE-SET,Apple,苹果服务
+  - RULE-SET,zhangzc,全球加速
+  - GEOIP,CN,DIRECT
+  - MATCH,全球加速
